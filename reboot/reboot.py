@@ -16,16 +16,22 @@ GPIO.setup(8, GPIO.OUT)  # PWM2 Left Motor
 GPIO.setup(40, GPIO.OUT) # PWM3 Right Motor
 
 # Setting up the GPIO pins that for some reason have power coming into it
+GPIO.setup(5, GPIO.OUT)
 GPIO.setup(7, GPIO.OUT)
 GPIO.setup(10, GPIO.OUT)
 GPIO.setup(24, GPIO.OUT)
+GPIO.setup(27, GPIO.OUT)
+GPIO.setup(28, GPIO.OUT)
 GPIO.setup(29, GPIO.OUT)
 GPIO.setup(31, GPIO.OUT)
 
 # Setting GPIO pins not in use to output of 0
+GPIO.output(5, 0)
 GPIO.output(7, 0)
 GPIO.output(10, 0)
 GPIO.output(24, 0)
+GPIO.output(27, 0)
+GPIO.output(28, 0)
 GPIO.output(29, 0)
 GPIO.output(31, 0)
 
