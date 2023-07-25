@@ -2,68 +2,29 @@
 import time 
 import RPi.GPIO as GPIO
 
-# Setting GPIO pins to be referred to their Broadcom SOC channel numbers (the name fo the GPIO pin)
-GPIO.setmode(GPIO.BCM)
+# Setting GPIO pins to be referred to their BOARD number (1-40)
+GPIO.setmode(GPIO.BOARD)
 
 # Disable warnings
 GPIO.setwarnings(False)	
 
 # Setting up the GPIO pins
-GPIO.setup(17,GPIO.OUT) # left
-GPIO.setup(18,GPIO.OUT) # right
-GPIO.setup(22,GPIO.OUT) # top
-GPIO.setup(23,GPIO.OUT) # bottom
+GPIO.setup(18, GPIO.OUT) # top
+GPIO.setup(8, GPIO.OUT)  # left
+GPIO.setup(40, GPIO.OUT) # right
 
-# Setting frequency (frequency of PWM / Hoe long one period is)
-freq1 = freq2 = freq3 = freq4 = 100
-
-# Setting Duty Cycle (The fraction of one period when a system or signal is active in %)
-# The duty cycle for each motor is then initiated with the defined initial value.
-# A value of means the motor is initially off.
-dc1 = dc2 = dc3 = dc4 = 0
+# Setting frequency (frequency of PWM / How long one period is)
+freq1 = freq2 = freq3 = 1000
 
 # Create PWM Object
-p = GPIO.PWM(17,freq1)
-pwm = GPIO.PWM(18,freq2)
-pto = GPIO.PWM(22,freq3)
-pbo = GPIO.PWM(23,freq4)
+top = GPIO.PWM(18, freq1)
+left = GPIO.PWM(8, freq2)
+right = GPIO.PWM(40, freq3)
 
 # Start PWM generation of a specified duty cycle
-p.start(dc1)
-pwm.start(dc2)
-pto.start(dc3)
-pbo.start(dc4)
-
-# Set the initial logic output (right(), left(), top(), bot(), forward())
-
-# Left motor's duty cycle is set to 0. Right motor's duty cycle is changed
-def right():
-	dc1 = 0
-	p.ChangeDutyCycle(dc1)
-	pwm.ChangeDutyCycle(dc2)
-
-# Right motor's duty cycle is set to 0. Left motor's duty cycle is changed
-def left():
-	dc2 = 0
-	p.ChangeDutyCycle(dc1)
-	pwm.ChangeDutyCycle(dc2)
-
-# Bottom motor's duty cycle is set to 0. Top motor's duty cycle is changed	
-def top():
-	dc4 = 0
-	pto.ChangeDutyCycle(dc3)
-	pbo.ChangeDutyCycle(dc4)
-
-# Top motor's duty cycle is set to 0. Bottom motor's duty cycle is changed	
-def bot():
-	dc3 = 0
-	pto.ChangeDutyCycle(dc3)
-	pbo.ChangeDutyCycle(dc4)
-
-# Left motor's duty cycle is changed. Right motor's duty cycle is changed	
-def forward():
-	p.ChangeDutyCycle(dc1)
-	pwm.ChangeDutyCycle(dc2)
+top.start(0)
+left.start(0)
+right.start(0)
 
 # The script uses various variables (buff1 through buff7, keep_going, keep, keep_up, keep_down, keep_for) 
 # to keep track of the current motion and speed of the vehicle, and to decide whether a command to change 
@@ -76,29 +37,31 @@ def forward():
 # buff5: Set to 1 when the vehicle is going up, and reset to 0 when the vehicle is not going up.
 # buff6: Set to 1 when the vehicle is going down, and reset to 0 when the vehicle is not going down.
 # buff7: Set to 1 when the vehicle is either going up or going down (any form of vertical motion).
+
 buff1 = buff2 = buff3 = buff4 = buff5 = buff6 = buff7 = 0
-keep_going = False # Left
-keep = False	   # Right
+
+keep_left = False
+keep_right = False
 keep_up = False
 keep_down = False
 keep_for = False
 
 try:
 	while True:
-		print(dc1, dc2, dc3, dc4)
+		# FIGURE OUT HOW THIS WORKS
 		command = raw_input("input: ")
 		
 		if command == 'a': # Turn left
-			keep_going = True
-		if command == 'd': # Turn right
-			keep = True	
-		if command == 'w': # Forward
+			keep_left = True
+		elif command == 'd': # Turn right
+			keep_right = True	
+		elif command == 'w': # Forward
 			keep_for = True
-		if command == 'u': # Top
+		elif command == 'u': # Top
 		    keep_up = True
-		if command == 'j': # Down
+		elif command == 'j': # Down
 		    keep_down = True
-		if command == 'r': # Stop two motors
+		elif command == 'r': # Stop two motors
 			# Left and Right duty cycles set to 0%
 			dc1 = 0
 			dc2 = 0
@@ -107,7 +70,7 @@ try:
 			right()
 			left()
 			forward()
-		if command == 'i': # Stop bottom motor
+		elif command == 'i': # Stop bottom motor
 			# Bottom and Top duty cycles set to 0%
 			dc3 = 0
 			dc4 = 0
@@ -182,10 +145,9 @@ try:
 		
 		# Stops all motion and cleans up the GPIO pins before breaking the loop and ending the program.
 		if command == 'z':
-			p.stop()
-			pwm.stop()
-			pto.stop()
-			pbo.stop()	
+			top.stop()
+			left.stop()
+			right.stop()
 			GPIO.cleanup()
 			break
 	
@@ -245,8 +207,7 @@ except KeyboardInterrupt:
 	print("Ctl C pressed")
 	# Stops the PWM signals to all four motors, and returns the pins to their default states. 
 	# This is an important step to avoid potential damage to the GPIO pins.
-	p.stop()
-	pwm.stop()
-	pto.stop()
-	pbo.stop()	
+	top.stop()
+	left.stop()
+	right.stop()
 	GPIO.cleanup()
