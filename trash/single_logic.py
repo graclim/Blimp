@@ -9,8 +9,8 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 # An analog input is a variable and can have multiple states
-GPIO.setup(17,GPIO.OUT) #AIN2 (Analog Input 2)
-GPIO.setup(18,GPIO.OUT) #AIN1 (Analog Input 1)
+GPIO.setup(17,GPIO.OUT) # AIN2 (Analog Input 2)
+GPIO.setup(18,GPIO.OUT) # AIN1 (Analog Input 1)
 
 # When AIN1 is HIGH and AIN2 is LOW, the motor turns in one direction
 # When AIN1 is LOW and AIN2 is HIGH, the motor turns in the opposite direction
@@ -26,8 +26,8 @@ def counterclockwise():
 	GPIO.output(18,GPIO.LOW)
 	
 count = 0
-keep_going = True
-keep = False
+keep_going = True # Left
+keep = False	  # Right
 
 try:
 	while keep_going:
@@ -48,4 +48,5 @@ try:
 except KeyboardInterrupt:
 	print("Ctl C pressed")
 	
+# Returns the pins to their default states. 	
 GPIO.cleanup()
